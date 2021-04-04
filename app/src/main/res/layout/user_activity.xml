@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.view.UserActivity">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/input_value_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/purple_500"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/dimens_dp_14"
+        android:paddingTop="@dimen/dimens_dp_10"
+        android:paddingRight="@dimen/dimens_dp_14"
+        android:paddingBottom="@dimen/dimens_dp_10"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/input_value"
+            android:layout_width="@dimen/dimens_dp_0"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/dimens_dp_8"
+            android:layout_marginRight="@dimen/dimens_dp_8"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_edit_text"
+            android:hint="@string/title_search_user"
+            android:padding="@dimen/dimens_dp_10" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_action_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/title_search" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ProgressBar
+        android:id="@+id/progress_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:minHeight="@dimen/dimens_dp_0"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/rv_list" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_list"
+        android:layout_width="@dimen/dimens_dp_0"
+        android:layout_height="@dimen/dimens_dp_0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/input_value_container" />
+</androidx.constraintlayout.widget.ConstraintLayout>
