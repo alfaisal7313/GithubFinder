@@ -4,25 +4,24 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.github.finder.model.Item
+import com.example.github.finder.R
+import com.example.github.finder.databinding.UserActivityBinding
 import com.example.github.finder.ui.adapter.UserAdapter
 import com.example.github.finder.utils.Network
 import com.example.github.finder.utils.ResponseData
 import com.example.github.finder.viewmodel.UserViewModel
-import com.example.github.finder.R
-import com.example.github.finder.databinding.UserActivityBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UserActivity : AppCompatActivity(), ResponseData<List<Item>> {
+class UserActivity : AppCompatActivity(), ResponseData {
     private lateinit var bindingView: UserActivityBinding
     private lateinit var userViewModel: UserViewModel
     private lateinit var userAdapter: UserAdapter
+    private lateinit var linearLayoutManager: LinearLayoutManager
 
     @Inject
     lateinit var network: Network
@@ -33,6 +32,11 @@ class UserActivity : AppCompatActivity(), ResponseData<List<Item>> {
         setContentView(bindingView.root)
 
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+        userAdapter = UserAdapter()
+        linearLayoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.VERTICAL, false
+        )
 
         setupUi()
         setupObservable()
@@ -45,63 +49,57 @@ class UserActivity : AppCompatActivity(), ResponseData<List<Item>> {
             }
 
             btnActionSearch.setOnClickListener {
-                searchData(it.toString())
+                searchData(inputValue.text.toString())
+            }
+
+            rvList.apply {
+                layoutManager = linearLayoutManager
+                adapter = userAdapter
             }
         }
     }
 
     private fun setupObservable() {
         userViewModel.apply {
-            userDataSource.userData.observe(this@UserActivity, Observer {
-                setData(it)
+            items().observe(this@UserActivity, { item ->
+                userAdapter.submitList(item)
             })
 
-            userDataSource.messageError.observe(this@UserActivity, Observer {
+            dataSource().messageError.observe(this@UserActivity, {
                 setError(it)
             })
 
-            userDataSource.loadingVisibility.observe(this@UserActivity, Observer {
+            dataSource().loadingVisibility.observe(this@UserActivity, {
                 if (it.equals(View.VISIBLE)) {
                     showLoading()
                 } else hideLoading()
             })
-
         }
     }
 
     private fun searchData(str: String) {
         if (network.isNetWork()) {
             if (str.isNotEmpty()) {
-                userViewModel.userDataSource.fetchDataSearch(str)
+                userViewModel.setQuery(str)
             } else {
                 setError(getString(R.string.msg_data_not_found))
             }
         } else setError(getString(R.string.msg_connection_failed))
     }
 
-    override fun setData(result: List<Item>) {
-        userAdapter = UserAdapter(result)
-        val linearLayoutManager = LinearLayoutManager(
-            this,
-            LinearLayoutManager.VERTICAL,
-            false
-        )
-
-        bindingView.rvList.apply {
-            layoutManager = linearLayoutManager
-            adapter = userAdapter
-        }
-    }
-
     override fun setError(msg: String?) {
+        userAdapter.errorList(true)
         Snackbar.make(bindingView.root, msg.toString(), Snackbar.LENGTH_LONG).show()
     }
 
     override fun showLoading() {
-        bindingView.progressView.visibility = View.VISIBLE
+        userAdapter.loadingList(true)
+        if (bindingView.rvList.adapter?.itemCount == 0) {
+            bindingView.loader.progressView.visibility = View.VISIBLE
+        }
     }
 
     override fun hideLoading() {
-        bindingView.progressView.visibility = View.GONE
+        bindingView.loader.progressView.visibility = View.GONE
     }
 }
