@@ -40,17 +40,16 @@
             android:text="@string/title_search" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <ProgressBar
-        android:id="@+id/progress_view"
+    <include
+        android:id="@+id/loader"
+        layout="@layout/item_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:minHeight="@dimen/dimens_dp_0"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/rv_list" />
+        app:layout_constraintTop_toTopOf="@+id/rv_list"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"
